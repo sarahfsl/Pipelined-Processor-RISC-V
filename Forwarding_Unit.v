@@ -1,0 +1,41 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Module Name: Fowarding_Unit
+//////////////////////////////////////////////////////////////////////////////////
+
+module Fowarding_Unit(
+    input [4:0] ID_EX_RS1, 
+    input [4:0] ID_EX_RS2, 
+    input [4:0] ID_EX_RD,       
+    input [4:0] EX_MEM_RD, 
+    input [4:0] MEM_WB_RD,      
+    input EX_MEM_REGWRITE, 
+    input MEM_WB_REGWRITE,      
+    output reg [1:0] FA, 
+    output reg [1:0] FB
+);
+    
+    always @(*) begin
+        // FORWARDING FOR A (Source 1)
+        
+        if (EX_MEM_REGWRITE && (EX_MEM_RD != 0) && (EX_MEM_RD == ID_EX_RS1))
+            FA = 2'b10; // Forward from EX Stage
+        
+        // MEM Hazard (Double Data Hazard Check)
+        else if (MEM_WB_REGWRITE && (MEM_WB_RD != 0) && (MEM_WB_RD == ID_EX_RS1) && 
+                !(EX_MEM_REGWRITE && (EX_MEM_RD != 0) && (EX_MEM_RD == ID_EX_RS1)))
+            FA = 2'b01; // Forward from MEM Stage
+        else
+            FA = 2'b00;
+            
+
+        // FORWARDING FOR B (Source 2)
+        if (EX_MEM_REGWRITE && (EX_MEM_RD != 0) && (EX_MEM_RD == ID_EX_RS2))
+            FB = 2'b10;
+        else if (MEM_WB_REGWRITE && (MEM_WB_RD != 0) && (MEM_WB_RD == ID_EX_RS2) && 
+                !(EX_MEM_REGWRITE && (EX_MEM_RD != 0) && (EX_MEM_RD == ID_EX_RS2)))
+            FB = 2'b01;
+        else
+            FB = 2'b00;
+     end 
+endmodule
