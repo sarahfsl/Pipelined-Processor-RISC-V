@@ -24,9 +24,7 @@ module Data_Memory(
     assign val6 = {32'b0, data_mem[279], data_mem[278], data_mem[277], data_mem[276]};
     assign val7 = {32'b0, data_mem[283], data_mem[282], data_mem[281], data_mem[280]};
 
-    // -------------------------------------------------------------------------
     // Initialization
-    // -------------------------------------------------------------------------
     initial begin
         for (i = 0; i < 512; i = i + 1) begin
             data_mem[i] = 8'h00; 
